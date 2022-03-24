@@ -1,8 +1,9 @@
 const cors = require("cors")
 const express = require("express")
-const stripe = require("stripe")("sk_test_51Kg6ZlSAPN3T9EBTNJDHii33HO4Jg6qAryeq0omncole0JUx9aCBBu3TNKsiXoqjpV00pDDqviMKHbG3UgTG1NHT00ssOARdzG")
+const stripe = require("stripe")("sk_test_51Kg6ZlSAPN3T9EBT5K75zaJPWrqgu2ucXoeTdICDEb3nm4Ucsh5zB8dkWZE1iQqxJDNnaXO9tb1tCRyWpgfF1WXq00woTU2y5S")
 const { v4: uuidv4 } = require('uuid')
 
+var amount1 = 0
 
 const app = express()
 
@@ -17,16 +18,19 @@ app.get("/",(req,res)=>{
 
 app.post("/payment",(req,res)=>{
     const {product,token} = req.body
-    console.log("Product",product)
-    console.log("price".at,product.price)
-    const idempotencyKey = uuid()
+    product.map((prdct)=>{
+        console.log("PRODUCT",prdct)
+        console.log("price",prdct.price)
+        amount1 = amount1 + prdct.price
+    })
+    const idempotencyKey = uuidv4()
     
     return stripe.customers.create({
         email:token.email,
         source:token.id
     }).then( customer => {
-        stripe.changes.create({
-            amount:product.price*100,
+        stripe.charges.create({ 
+            amount:amount1*100,
             currency:"usd",
             customer:customer.id,
             receipt_email:token.email,
