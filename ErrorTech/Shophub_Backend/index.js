@@ -34,14 +34,14 @@ app.post("/payment",(req,res)=>{
             currency:"usd",
             customer:customer.id,
             receipt_email:token.email,
-            description:`purchase of ${product.name}`,
+            description:`purchase of ${product[0].name}`,
             shipping:{
                 name:token.card.name,
                 address:{
                     country:token.card.address_country
                 }
             }
-        })
+        })// {stripe_account: "acct_XXXXXX"})
     },{idempotencyKey}).then( result => res.status(200).json(result)).catch(err => console.log("ERROR MESSAGE",err))
 })
 
